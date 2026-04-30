@@ -1,5 +1,5 @@
 # Application détection d'encombrants par IA 
-Ce projet consiste à développer une application permettant la détectionon automatique
+Ce projet consiste à développer une application permettant la détection automatique
 d’encombrants à partir d’un flux vidéo issu d’une caméra. La première étape est de
 détecter un objet anormal sur une scène fixe avec une persistance dans le temps pour
 éviter de faux positifs. La seconde étape est celle de classification, elle consiste à
@@ -13,4 +13,12 @@ temporelle des objets détectés.
 
 # Etape 1 : Préparation et Architecture du Projet 
 - Création du dépot GitHub 
--  Import des bibliothèsques python et téléchargements à faire si besoin 
+- Import des bibliothèsques python et téléchargements à faire si besoin 
+- Installation d'un environnement virtuel avec toutes les dépendances dessus
+- Création du cahier des charges 
+
+# Etape 2 : Détection des objets et logique de persistance temporelle 
+- Apprentissage de l'image source de la caméra 
+- Detection grâce aux niveaux de gris , d'un nouvel objet sur l'écran 
+- Appliquer une logique de persistance temporelle de x secondes pour sauvegarder l'image de l'objet 
+- Mettre en place des zones de détection pour indiquer quels zones sont utiles (ex : écarter le ciel et ses changements)
