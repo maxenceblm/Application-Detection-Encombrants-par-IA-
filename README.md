@@ -19,6 +19,8 @@ temporelle des objets détectés.
 
 # Etape 2 : Détection des objets et logique de persistance temporelle 
 - Apprentissage de l'image source de la caméra 
-- Detection grâce aux niveaux de gris , d'un nouvel objet sur l'écran 
-- Appliquer une logique de persistance temporelle de x secondes pour sauvegarder l'image de l'objet 
-- Mettre en place des zones de détection pour indiquer quels zones sont utiles (ex : écarter le ciel et ses changements)
+- Detection grâce aux niveaux de gris , d'un nouvel objet qui apparait dans le champ de l'image  
+- Appliquer une logique de persistance temporelle de x secondes pour sauvegarder la zone de détection 
+- Mettre en place des zones de détection pour indiquer quels zones sont utiles (ex : écarter le ciel )
+
+# Etape 3 : Classification des Encombrants par annotation 

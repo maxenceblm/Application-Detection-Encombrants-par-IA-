@@ -1,0 +1,15 @@
+# Fichiers vidéo (trop lourds pour GitHub)
+*.mov
+*.mp4
+*.avi
+*.mkv
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
