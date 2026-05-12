@@ -1,4 +1,4 @@
-# Fichiers vidéo (trop lourds pour GitHub)
+# Fichiers vidéo 
 *.mov
 *.mp4
 *.avi
@@ -13,3 +13,6 @@ __pycache__/
 *.pyo
 .env
 venv/
+
+# Dataset 
+dataset/
