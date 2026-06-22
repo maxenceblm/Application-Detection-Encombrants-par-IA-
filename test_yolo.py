@@ -1,6 +1,18 @@
-#Fichier pour tester les modèles facilement sur une image 
 from ultralytics import YOLO
+import cv2
 
-model = YOLO("yolov8m.pt")  #charge le modèle 
-results = model("https://www.grandparissud.fr/app/uploads/2023/03/dechets-encombrants-962x500.jpeg")    #image passé dans le modèle
-results[0].show()
+model = YOLO("runs/detect/train-19/weights/best.pt")
+cap = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    results = model(frame, conf=0.5)
+    annotated = results[0].plot()
+    cv2.imshow("YOLO Webcam", annotated)
+    if cv2.waitKey(1) == ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()

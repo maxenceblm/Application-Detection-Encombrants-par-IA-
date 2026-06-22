@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Encombrant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #000000;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: -20px -20px 20px -20px;
+        }
+        .left {
+            flex-direction: row;
+            align-items: center;
+            display: flex;
+        }
+        .left a {
+            margin-right: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .button {
+            background-color: #b12929;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .button:hover {
+            background-color: #ff0404;
+        }
+        .button2{
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .button2:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left">
+            <a href="{{ url_for('index') }}">Accueil</a>
+            <a href="{{ url_for('cameras') }}">Caméras</a>
+            <a href ="{{url_for('historique')}}">Historique</a>
+            <a href="{{ url_for('modele') }}">Modèle</a>
+            <a href="{{ url_for('carte') }}">Carte</a>
+        </div>
+    </div>
+    <h1>Encombrant n°{{ encombrant.id_encombrant }} </h1>
+    <div class="container">
+        <img src="{{ url_for('static', filename=encombrant.photo_path) }}" alt="{{ encombrant.classe }}" style="max-width: 300px;">
+         <p><strong>Classe :</strong> {{ encombrant.classe }}</p>
+        <p><strong>État :</strong> {{ encombrant.statut }}</p>
+        <p><strong>Indice de confiance :</strong> {{ "%.2f"|format(encombrant.confiance) }}</p>
+        <div class="countdown-box">
+            Temps écoulé : <span id="countdown"></span>
+        </div>
+        <button class="button2" type="button" onclick="document.getElementById('form-reclasser').style.display='block'; this.style.display='none';">Reclasser</button>
+
+        <form id="form-reclasser" method="POST" action="{{ url_for('reclasser', id=encombrant.id_encombrant) }}" style="display:none; margin-top:10px;">
+            <select name="classe">
+                <option value="Canapé">Canapé</option>
+                <option value="Carton">Carton</option>
+                <option value="Chaise">Chaise</option>
+                <option value="Commode">Commode</option>
+                <option value="Réfrigérateur">Réfrigérateur</option>
+                <option value="Machine à laver">Machine à laver</option>
+                <option value="Matelas">Matelas</option>
+                <option value="Sac poubelle">Sac poubelle</option>
+                <option value="Table">Table</option>
+                <option value="Vélo">Vélo</option>
+                <option value="Télévision">Télévision</option>
+            </select>
+            <button class="button2" type="submit">Confirmer</button>
+        </form>
+
+        </form>
+
+        <form method="POST" action="{{ url_for('enlever', id=encombrant.id_encombrant) }}">
+            <button class="button" type="submit">Enlever encombrant</button>
+        </form>
+        <form method="POST" action="{{ url_for('supprimer', id=encombrant.id_encombrant) }}">
+            <button class="button" type="submit">Supprimer encombrant</button>
+        </form>
+    </div>
+    <script>
+        var dateDebut = new Date("{{ encombrant.date_detection }}".replace(' ', 'T')).getTime();
+        var x = setInterval(function() {
+            var now = new Date().getTime();
+            var distance = now - dateDebut;
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            document.getElementById("countdown").innerHTML =
+                days + "j " + hours + "h " + minutes + "m " + seconds + "s ";
+        }, 1000);
+    </script>
+</body>
+</html>

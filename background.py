@@ -3,7 +3,7 @@ import time
 import numpy as np  
 
 cap = cv2.VideoCapture(0)
-TAILLE_MIN = 4000 #Taille Minimum pour considérer un objet 
+TAILLE_MIN = 8000 #Taille Minimum pour considérer un objet 
 PERSISTANCE_MIN = 90 #Temps minimum pour considérer un objet 
 print("Apprentissage du fond en cours ... ")
 time.sleep(3)

@@ -1,26 +1,58 @@
-# Application détection d'encombrants par IA 
-Ce projet consiste à développer une application permettant la détection automatique
-d’encombrants à partir d’un flux vidéo issu d’une caméra. La première étape est de
-détecter un objet anormal sur une scène fixe avec une persistance dans le temps pour
-éviter de faux positifs. La seconde étape est celle de classification, elle consiste à
-identifier le type d’objet (carton, meuble, électroménager …). Ces informations sont
-ensuite enregistrées dans une base de données dynamique utilisée par une application
-web permettant de visualiser, filtrer et suivre les signalements. Le projet peut inclure
-par la suite une logique métier proposant par exemple un type de véhicule adapté pour
-l’intervention. Les diﬃcultés seront notamment la détection d’encombrants dans un
-environnement réel (variations de lumières et mouvements) ainsi que dans la gestion
-temporelle des objets détectés.
+# Application de Détection d’Encombrants par IA
 
-# Etape 1 : Préparation et Architecture du Projet 
-- Création du dépot GitHub 
-- Import des bibliothèsques python et téléchargements à faire si besoin 
-- Installation d'un environnement virtuel avec toutes les dépendances dessus
-- Création du cahier des charges 
+Projet L3 Informatique - Aix-Marseille Université (2025-2026)
 
-# Etape 2 : Détection des objets et logique de persistance temporelle 
-- Apprentissage de l'image source de la caméra 
-- Detection grâce aux niveaux de gris , d'un nouvel objet qui apparait dans le champ de l'image  
-- Appliquer une logique de persistance temporelle de x secondes pour sauvegarder la zone de détection 
-- Mettre en place des zones de détection pour indiquer quels zones sont utiles (ex : écarter le ciel )
+Système de détection automatique d’encombrants urbains par caméra, combinant soustraction de fond statique (OpenCV) et classification par modèle YOLOv8m entraîné sur mesure (11 classes, 89.1% mAP50). Les signalements sont enregistrés en base SQLite et consultables via une interface web Flask avec carte interactive.
 
-# Etape 3 : Classification des Encombrants par annotation 
+## Stack technique
+
+- **Python 3.14** - Langage principal
+- **OpenCV** - Capture vidéo, soustraction de fond, morphologie
+- **YOLOv8m (Ultralytics)** - Classification des encombrants
+- **Flask** - Serveur web
+- **SQLite** - Base de données
+- **Leaflet.js + OpenStreetMap** - Carte interactive
+
+## Structure du projet
+
+```
+detector.py          # Module de détection (fond statique + persistance + YOLO)
+database.py          # Accès centralisé à la base de données
+predict_img.py       # Classification sur image fixe
+split_dataset.py     # Découpage du dataset d’entraînement
+bdd/                 # Base de données SQLite (générée automatiquement)
+runs/detect/train-19/weights/best.pt  # Poids du modèle YOLO
+siteweb/
+  app.py             # Serveur Flask
+  templates/         # Pages HTML (accueil, détail, caméras, historique, modèle, carte)
+  static/            # Captures, icônes
+```
+
+## Installation
+
+```bash
+pip install opencv-python ultralytics flask numpy
+```
+
+## Lancement
+
+Terminal 1 (détecteur) :
+```bash
+python3 detector.py
+```
+
+Terminal 2 (serveur web) :
+```bash
+cd siteweb
+python3 app.py
+```
+
+Interface accessible sur http://localhost:5000
+
+## Classes détectées (11)
+
+Canapé, Carton, Chaise, Commode, Réfrigérateur, Machine à laver, Matelas, Sac poubelle, Table, Vélo, Télévision
+
+## Auteur
+
+Balme Maxence - L3 Informatique, Aix-Marseille Université

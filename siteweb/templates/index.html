@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Encombrants Présents</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .card {
+            background-color: white;
+            width: 280px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.03);
+        }
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .card-content {
+            padding: 15px;
+        }
+        .card-content h3 {
+            margin: 0 0 10px;
+        }
+        .card-content p {
+            color: #555;
+            font-size: 14px;
+        }
+        .card-content .btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .card-content .btn:hover {
+            background-color: #0056b3;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: -20px -20px 20px -20px;
+        }
+        .left {
+            flex-direction: row;
+            align-items: center;
+            display: flex;
+        }
+        .left a {
+            margin-right: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left">
+            <a href="{{ url_for('index') }}">Accueil</a>
+            <a href="{{ url_for('cameras') }}">Caméras</a>
+            <a href ="{{url_for('historique')}}">Historique</a>
+            <a href ="{{url_for('modele')}}">Modèle</a>
+            <a href ="{{url_for('carte')}}">Carte</a>
+        </div>
+    </div>
+    <h1>Encombrants Détectés</h1>
+    <div class="cards-container">
+        {% for encombrant in encombrants %}
+        <div class="card">
+            <img src="{{ url_for('static', filename=encombrant.photo_path) }}" alt="{{ encombrant.classe }}">
+            <div class="card-content">
+                <h3>{{ encombrant.classe }}</h3>
+                <p><strong>Date Détection :</strong> {{ encombrant.date_detection | date_fr  }}</p>
+                <a class="btn" href="{{ url_for('encombrant', id=encombrant.id_encombrant) }}">Voir l'encombrant</a>
+            </div>
+        </div>
+        {% else %}
+            <p>Aucun encombrant détecté pour le moment.</p>
+        {% endfor %}
+    </div>
+    <script>
+        setInterval(() => {
+            fetch('/api/encombrants')
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.querySelector('.cards-container');
+                    container.innerHTML = data.map(e => `
+                        <div class="card">
+                            <img src="/static/${e.photo_path}" alt="${e.classe}">
+                            <div class="card-content">
+                                <h3>${e.classe}</h3>
+                                <p><strong>Date :</strong> ${e.date_detection}</p>
+                                <a class="btn" href="/encombrant/${e.id_encombrant}">Voir l'encombrant</a>
+                            </div>
+                        </div>
+                    `).join('') || '<p>Aucun encombrant détecté pour le moment.</p>';
+                });
+        }, 10000);
+    </script>
+</body>
+</html>

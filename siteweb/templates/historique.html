@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Historique des Encombrants</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: -20px -20px 20px -20px;
+        }
+        .left {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .left a { 
+            margin-right: 20px; 
+        }
+        
+        a { 
+            text-decoration: none; color: #007BFF; 
+        
+        }
+        a:hover { 
+            color: #0056b3; 
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-left: 40px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 16px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: #ccc;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -31px;
+            top: 20px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 2px #ccc;
+        }
+
+        .dot-present { 
+            background-color: #28a745; box-shadow: 0 0 0 2px #28a745; 
+        }
+
+        .dot-enleve  { background-color: #dc3545; box-shadow: 0 0 0 2px #dc3545; }
+
+        .timeline-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .timeline-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        .timeline-info h3 {
+            margin: 0 0 5px;
+            font-size: 16px;
+        }
+
+        .timeline-info p {
+            margin: 2px 0;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .statut-present { 
+            color: #28a745; font-weight: bold; 
+        }
+
+        .statut-enleve  { 
+            color: #dc3545; font-weight: bold; 
+        }
+
+        .timeline-info a {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left">
+            <a href="{{ url_for('index') }}">Accueil</a>
+            <a href="{{ url_for('cameras') }}">Caméras</a>
+            <a href="{{ url_for('historique') }}">Historique</a>
+            <a href="{{ url_for('modele') }}">Modèle</a>
+            <a href="{{ url_for('carte') }}">Carte</a>
+        </div>
+    </div>
+    <h1>Historique des Encombrants</h1>
+    <div class="timeline">
+        {% for e in encombrants %}
+        <div class="timeline-item">
+            <div class="timeline-dot {{ 'dot-present' if e.statut == 'Présent' else 'dot-enleve' }}"></div>
+            <div class="timeline-card">
+                <img src="{{ url_for('static', filename=e.photo_path) }}" alt="{{ e.classe }}">
+                <div class="timeline-info">
+                    <h3>{{ e.classe }}</h3>
+                    <p>📅 {{ e.date_detection | date_fr  }}</p>
+                    <p>📷 {{ e.camera_nom or '—' }} · {{ e.camera_localisation or '—' }}</p>
+                    <p>Confiance : {{ "%.2f"|format(e.confiance) }}</p>
+                    <p class="{{ 'statut-present' if e.statut == 'Présent' else 'statut-enleve' }}">
+                        {{ '● Présent' if e.statut == 'Présent' else '● Enlevé le ' + (e.date_suppression or '') }}
+                    </p>
+                    <a href="{{ url_for('encombrant', id=e.id_encombrant) }}">Voir le détail →</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p>Aucun encombrant enregistré.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

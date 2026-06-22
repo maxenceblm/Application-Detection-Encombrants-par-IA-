@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+            <title>Liste des caméras disponibles</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 20px;
+                text-align: center;
+            }
+            h1 {
+                color: #000000;
+                text-align: center;
+            }
+            .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: -20px -20px 20px -20px;
+            }
+            .left {
+            flex-direction: row;
+            align-items: center;
+            display: flex;
+            }
+            .left a { /* Left navigation links */
+                margin-right: 20px;
+            }
+            .right { /* Right navigation */
+                float: right;
+                flex-direction: column;
+                margin-bottom: 10px;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+            }
+            
+            a {
+                text-decoration: none;
+                color: #007BFF;
+            }
+            a:hover {
+                color: #0056b3;
+            }
+            .button {
+                background-color: red;
+                color: white;
+                padding: 5px 10px; 
+                border-radius: 3px; 
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="left">
+                <a href="{{ url_for('index') }}">Accueil</a>
+                <a href="{{ url_for('cameras') }}">Caméras</a>
+                <a href ="{{url_for('historique')}}">Historique</a>
+                <a href="{{ url_for('modele') }}">Modèle</a>
+                <a href="{{ url_for('carte') }}">Carte</a>
+            </div>
+        </div>
+        <h1>Caméras Disponibles</h1>
+        {% if not cameras %}
+            <p>Aucune caméra trouvée.</p>
+        {% else %}
+         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Statut</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Nom du dispositif</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Adresse</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Nombre d'encombrants détectés</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cam in cameras %}
+                        <tr style="background-color: #fff;">
+                            <td style="padding: 10px; text-align: center;">
+                                {% if cam.actif %}
+                                    <span style="color: green;">● ON</span>
+                                {% else %}
+                                    <span style="color: red;">● OFF</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 10px;">{{ cam.nom }}</td>
+                            <td style="padding: 10px;">{{ cam.localisation }}</td>
+                            <td style="padding: 10px;">{{ cam.nb_encombrants }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+         </table>
+    {% endif %}
+    </body>
+</html>

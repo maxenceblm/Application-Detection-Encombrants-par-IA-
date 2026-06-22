@@ -16,3 +16,8 @@ venv/
 
 # Dataset 
 dataset/
+
+
+captures/
+runs/
+imgtest/

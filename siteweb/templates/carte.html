@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Carte des Caméras</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .left { 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+        }
+
+        .left a { 
+            margin-right: 20px; 
+        }
+
+        a { 
+            text-decoration: none; color: #007BFF; 
+        }
+
+        a:hover { 
+            color: #0056b3; 
+        }
+        
+        #map {
+            height: calc(100vh - 45px);
+            width: 100%;
+        }
+
+        .popup-titre {
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .popup-lieu {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .popup-statut {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .popup-classes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 6px;
+        }
+
+        .popup-classe-badge {
+            background: #007BFF;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left">
+            <a href="{{ url_for('index') }}">Accueil</a>
+            <a href="{{ url_for('cameras') }}">Caméras</a>
+            <a href="{{ url_for('historique') }}">Historique</a>
+            <a href="{{ url_for('modele') }}">Modèle</a>
+            <a href="{{ url_for('carte') }}">Carte</a>
+        </div>
+    </div>
+    <div id="map"></div>
+
+    <script>
+
+        var map = L.map('map').setView([43.5288, 5.4499], 10);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        const classeToIcon = {
+            'Canapé': 'canape', 'Carton': 'carton', 'Chaise': 'chaise',
+            'Commode': 'commode', 'Réfrigérateur': 'frigo',
+            'Machine à laver': 'machinealaver', 'Matelas': 'matelas',
+            'Sac poubelle': 'sacpoubelle', 'Table': 'table',
+            'Vélo': 'velo', 'Télévision': 'television'
+        };
+
+        fetch('/api/cameras')
+            .then(r => r.json())
+            .then(cameras => {
+                cameras.forEach(cam => {
+                    if (!cam.latitude || !cam.longitude) return;
+
+                    var couleur = cam.actif ? '#28a745' : '#dc3545';
+                    var icon = L.icon({
+                        iconUrl: cam.actif ? '/static/icons/camera_on.png' : '/static/icons/camera-off.png',
+                        iconSize: [30, 30],
+                        iconAnchor: [20, 20],
+                        popupAnchor: [0, -20]
+                    });
+                    var classes = cam.classes ? cam.classes.split(',') : [];
+                    var badgesHTML = classes.length > 0
+                        ? classes.map(item => {
+                            var [id, classe] = item.split(':');
+                            var iconFile = classeToIcon[classe] || classe.toLowerCase();
+                            return `<a href="/encombrant/${id}"><img src="/static/icons/classes/${iconFile}.png" title="${classe}" style="width:50px; height:50px; border-radius:50%; margin:3px;"></a>`;
+                        }).join('')
+                        : '<span style="color:#999; font-size:12px;">Aucun encombrant détecté</span>';
+                    var statutHTML = cam.actif
+                        ? '<span style="color:#28a745;">● Active</span>'
+                        : '<span style="color:#dc3545;">● Inactive</span>';
+
+                    var popup = `
+                        <div class="popup-titre"> ${cam.nom}</div>
+                        <div class="popup-lieu"> ${cam.localisation}</div>
+                        <div class="popup-statut">${statutHTML}</div>
+                        <div><strong>Encombrants présents :</strong></div>
+                        <div class="popup-classes">${badgesHTML}</div>
+                    `;
+
+                    L.marker([cam.latitude, cam.longitude], {icon: icon})
+                        .addTo(map)
+                        .bindPopup(popup, {maxWidth: 250});
+                });
+            });
+    </script>
+</body>
+</html>
